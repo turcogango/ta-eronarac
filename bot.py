@@ -48,13 +48,21 @@ GRUPLAR = {
     "BOŞ": ["SKY116","SKY117","SKY118","SKY119","SKY120"]
 }
 
+# 🔧 komut adı temizleme
+def normalize_command(name):
+    return (
+        name.lower()
+        .replace(" ", "")
+        .replace("ç","c").replace("ğ","g").replace("ı","i")
+        .replace("ö","o").replace("ş","s").replace("ü","u")
+    )
+
 async def create_panel_session(panel_config):
     ssl_ctx = ssl.create_default_context()
     ssl_ctx.check_hostname = False
     ssl_ctx.verify_mode = ssl.CERT_NONE
 
-    connector = aiohttp.TCPConnector(limit=20, ssl=ssl_ctx)
-    session = aiohttp.ClientSession(connector=connector)
+    session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(ssl=ssl_ctx))
 
     login_url = f"{panel_config['url']}/login"
     reports_url = f"{panel_config['url']}/reports/quickly"
@@ -88,6 +96,7 @@ async def create_panel_session(panel_config):
 
 async def fetch_amount(session, panel_url, csrf, user_uuid):
     today = (datetime.utcnow() + timedelta(hours=3)).strftime("%Y-%m-%d")
+
     try:
         async with session.post(
             f"{panel_url}/reports/quickly",
@@ -105,17 +114,16 @@ async def fetch_amount(session, panel_url, csrf, user_uuid):
         return 0.0
 
 
-async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
+# 🔥 HER GRUP İÇİN AYRI HANDLER
+def create_group_handler(grup_adi):
 
-    session, csrf = await create_panel_session(PANEL)
+    async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    await update.message.reply_text("📊 Rapor hazırlanıyor...")
+        skylar = GRUPLAR[grup_adi]
 
-    total_all = 0.0
+        session, csrf = await create_panel_session(PANEL)
 
-    for grup, skylar in GRUPLAR.items():
-
-        mesaj = f"📌 {grup} ({len(skylar)})\n"
+        mesaj = f"📌 {grup_adi} ({len(skylar)})\n"
 
         tasks = []
         keys = []
@@ -124,24 +132,13 @@ async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
             key = s.strip().upper()
 
             if key not in USERS:
-                mesaj += f"{key} ❌ Kullanıcı yok\n"
+                mesaj += f"{key} ❌\n"
                 continue
-
-            info = USERS[key]
 
             keys.append(key)
             tasks.append(
-                fetch_amount(
-                    session,
-                    PANEL["url"],
-                    csrf,
-                    info["uuid"]
-                )
+                fetch_amount(session, PANEL["url"], csrf, USERS[key]["uuid"])
             )
-
-        if not tasks:
-            await update.message.reply_text(mesaj + "⚠️ Geçerli kullanıcı yok")
-            continue
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -151,31 +148,28 @@ async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
             if isinstance(result, Exception):
                 result = 0.0
 
-            devir = float(DEVIRS.get(key, 0))
-            total = result + devir
-
+            total = result + float(DEVIRS.get(key, 0))
             grup_total += total
+
             mesaj += f"{key} {total:,.2f} ₺\n"
 
-        mesaj += f"Toplam: {grup_total:,.2f} ₺\n"
+        mesaj += f"\n🔥 Toplam: {grup_total:,.2f} ₺"
 
-        total_all += grup_total
-
+        await session.close()
         await update.message.reply_text(mesaj)
-        await asyncio.sleep(0.2)
 
-    await session.close()
-
-    await update.message.reply_text(
-        f"🔥 GENEL TOPLAM: {total_all:,.2f} ₺\nSAYGILAR ABİ"
-    )
+    return handler
 
 
 if __name__ == "__main__":
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
-    app.add_handler(CommandHandler("araci", araci))
+
+    # 🔥 TÜM GRUPLAR İÇİN KOMUT OLUŞTUR (EN KRİTİK KISIM)
+    for grup in GRUPLAR:
+        cmd = normalize_command(grup)
+        app.add_handler(CommandHandler(cmd, create_group_handler(grup)))
 
     print("Bot çalışıyor...")
     app.run_polling()
