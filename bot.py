@@ -3,6 +3,8 @@ import ssl
 import aiohttp
 import json
 import asyncio
+import re
+import unicodedata
 from datetime import datetime, timedelta
 from telegram import Update
 from telegram.ext import ContextTypes, ApplicationBuilder, CommandHandler
@@ -48,14 +50,14 @@ GRUPLAR = {
     "BOŞ": ["SKY116","SKY117","SKY118","SKY119","SKY120"]
 }
 
-# 🔧 komut adı temizleme
+# ✅ TELEGRAM UYUMLU KOMUT ÜRETİCİ (KESİN ÇÖZÜM)
 def normalize_command(name):
-    return (
-        name.lower()
-        .replace(" ", "")
-        .replace("ç","c").replace("ğ","g").replace("ı","i")
-        .replace("ö","o").replace("ş","s").replace("ü","u")
-    )
+    name = unicodedata.normalize("NFKD", name)
+    name = name.encode("ascii", "ignore").decode("ascii")
+    name = name.lower().replace(" ", "")
+    name = re.sub(r"[^a-z0-9_]", "", name)
+    return name
+
 
 async def create_panel_session(panel_config):
     ssl_ctx = ssl.create_default_context()
@@ -114,7 +116,7 @@ async def fetch_amount(session, panel_url, csrf, user_uuid):
         return 0.0
 
 
-# 🔥 HER GRUP İÇİN AYRI HANDLER
+# 🔥 HER GRUP İÇİN AYRI KOMUT (GARANTİ)
 def create_group_handler(grup_adi):
 
     async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -166,9 +168,10 @@ if __name__ == "__main__":
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # 🔥 TÜM GRUPLAR İÇİN KOMUT OLUŞTUR (EN KRİTİK KISIM)
+    # 🔥 TÜM KOMUTLARI OLUŞTUR
     for grup in GRUPLAR:
         cmd = normalize_command(grup)
+        print(grup, "->", cmd)  # debug
         app.add_handler(CommandHandler(cmd, create_group_handler(grup)))
 
     print("Bot çalışıyor...")
