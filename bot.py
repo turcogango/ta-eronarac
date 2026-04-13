@@ -50,7 +50,6 @@ GRUPLAR = {
     "BOŞ": ["SKY116","SKY117","SKY118","SKY119","SKY120"]
 }
 
-# ✅ TELEGRAM UYUMLU KOMUT ÜRETİCİ (KESİN ÇÖZÜM)
 def normalize_command(name):
     name = unicodedata.normalize("NFKD", name)
     name = name.encode("ascii", "ignore").decode("ascii")
@@ -116,7 +115,6 @@ async def fetch_amount(session, panel_url, csrf, user_uuid):
         return 0.0
 
 
-# 🔥 HER GRUP İÇİN AYRI KOMUT (GARANTİ)
 def create_group_handler(grup_adi):
 
     async def handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -138,9 +136,7 @@ def create_group_handler(grup_adi):
                 continue
 
             keys.append(key)
-            tasks.append(
-                fetch_amount(session, PANEL["url"], csrf, USERS[key]["uuid"])
-            )
+            tasks.append(fetch_amount(session, PANEL["url"], csrf, USERS[key]["uuid"]))
 
         results = await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -163,16 +159,27 @@ def create_group_handler(grup_adi):
     return handler
 
 
+# 🔥 HELP KOMUTU
+async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    komutlar = "\n".join("/" + normalize_command(g) for g in GRUPLAR)
+
+    await update.message.reply_text("📌 KOMUTLAR:\n\n" + komutlar)
+
+
 if __name__ == "__main__":
+
     BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
     app = ApplicationBuilder().token(BOT_TOKEN).build()
 
-    # 🔥 TÜM KOMUTLARI OLUŞTUR
+    # 🔥 GRUP KOMUTLARI
     for grup in GRUPLAR:
         cmd = normalize_command(grup)
-        print(grup, "->", cmd)  # debug
         app.add_handler(CommandHandler(cmd, create_group_handler(grup)))
+
+    # 🔥 HELP
+    app.add_handler(CommandHandler("help", help_command))
 
     print("Bot çalışıyor...")
     app.run_polling()
