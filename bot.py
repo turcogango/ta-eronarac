@@ -13,17 +13,10 @@ with open("users.json", "r", encoding="utf-8") as f:
 with open("devir.json", "r", encoding="utf-8") as f:
     DEVIRS = json.load(f)
 
-PANELS = {
-    "panel1": {
-        "url": os.environ.get("PANEL1_URL"),
-        "username": os.environ.get("PANEL1_USER"),
-        "password": os.environ.get("PANEL1_PASS")
-    },
-    "panel2": {
-        "url": os.environ.get("PANEL2_URL"),
-        "username": os.environ.get("PANEL2_USER"),
-        "password": os.environ.get("PANEL2_PASS")
-    }
+PANEL = {
+    "url": os.environ.get("PANEL2_URL"),
+    "username": os.environ.get("PANEL2_USER"),
+    "password": os.environ.get("PANEL2_PASS")
 }
 
 GRUPLAR = {
@@ -114,24 +107,11 @@ async def fetch_amount(session, panel_url, csrf, user_uuid):
 
 async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
-    panel_sessions = {}
-    for name, panel in PANELS.items():
-        panel_sessions[name] = await create_panel_session(panel)
+    session, csrf = await create_panel_session(PANEL)
 
     await update.message.reply_text("📊 Rapor hazırlanıyor...")
 
     total_all = 0.0
-
-    BIRLESIK_GRUPLAR = {
-        "CİCİ", "METEHAN", "MEMATİ", "WALTERWHİTE",
-        "GECEBEY", "MAXWEL", "XAR", "FAVELA",
-        "KARTAL", "GOOGLE", "BELİER", "TOM HARDY",
-        "CAVİT", "SARRAF", "ALFİE"
-    }
-
-    birlesik_text = "📌 SEÇİLİ GRUPLAR RAPORU\n\n"
-    birlesik_total = 0.0
-    birlesik_var = False
 
     for grup, skylar in GRUPLAR.items():
 
@@ -139,10 +119,6 @@ async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         tasks = []
         keys = []
-
-        if not skylar:
-            await update.message.reply_text(mesaj + "⚠️ Grup boş")
-            continue
 
         for s in skylar:
             key = s.strip().upper()
@@ -152,13 +128,12 @@ async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 continue
 
             info = USERS[key]
-            session, csrf = panel_sessions[info["panel"]]
 
             keys.append(key)
             tasks.append(
                 fetch_amount(
                     session,
-                    PANELS[info["panel"]]["url"],
+                    PANEL["url"],
                     csrf,
                     info["uuid"]
                 )
@@ -186,22 +161,10 @@ async def araci(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
         total_all += grup_total
 
-        # 🔥 BİRLEŞTİRME KONTROLÜ
-        if grup in BIRLESIK_GRUPLAR:
-            birlesik_var = True
-            birlesik_text += mesaj + "\n"
-            birlesik_total += grup_total
-        else:
-            await update.message.reply_text(mesaj)
-
+        await update.message.reply_text(mesaj)
         await asyncio.sleep(0.2)
 
-    if birlesik_var:
-        birlesik_text += f"🔥 TOPLAM: {birlesik_total:,.2f} ₺"
-        await update.message.reply_text(birlesik_text)
-
-    for session, _ in panel_sessions.values():
-        await session.close()
+    await session.close()
 
     await update.message.reply_text(
         f"🔥 GENEL TOPLAM: {total_all:,.2f} ₺\nSAYGILAR ABİ"
