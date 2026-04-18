@@ -36,10 +36,11 @@ GRUPLAR = {
     "CAVİT": ["SKY35","SKY88","SKY19","SKY118"],
     "TOM HARDY": ["SKY26"],
     "BELİER": ["SKY45"],
+    "FAST": ["SKY123"],
     "GOOGLE": ["SKY52"],
     "KARTAL": ["SKY68"],
     "FAVELA": ["SKY74"],
-    "XAR": ["SKY79","SKY113","SKY120"],
+    "XAR": ["SKY79","SKY113","SKY120","SKY64","SKY124"],
     "MAXWEL": ["SKY85","SKY64"],
     "GECEBEY": ["SKY05"],
     "WALTERWHİTE": ["SKY60"],
@@ -47,7 +48,7 @@ GRUPLAR = {
     "METEHAN": ["SKY97"],
     "CİCİ": ["SKY38","SKY56","SKY92"],
     "FRED": ["SKY106","SKY107","SKY108","SKY109","SKY110","SKY111","SKY115","SKY116","SKY117"],
-    "BOŞ": ["SKY123"]
+    "BOŞ": ["SKY125"]
 }
 }
 
