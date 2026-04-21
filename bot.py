@@ -43,7 +43,7 @@ GRUPLAR = {
     "FAVELA": ["SKY74"],
     "EŞREFTEKTÜK": ["SKY133"],
     "XAR": ["SKY79","SKY113","SKY120","SKY64","SKY124"],
-    "MAXWEL": ["SKY85","SKY64"],
+    "MAXWEL": ["SKY85"],
     "GECEBEY": ["SKY05"],
     "WALTERWHİTE": ["SKY60"],
     "MEMATİ": ["SKY78","SKY90"],
