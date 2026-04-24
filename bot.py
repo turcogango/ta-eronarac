@@ -34,7 +34,7 @@ GRUPLAR = {
     "MEHMET ELVERDİ": ["SKY71","SKY80","SKY81","SKY82","SKY89","SKY15","SKY95"],
     "ALFİE": ["SKY18","SKY33","SKY54"],
     "SARRAF": ["SKY28","SKY44","SKY63"],
-    "CAVİT": ["SKY35","SKY88","SKY118","SKY128"],
+    "CAVİT": ["SKY35","SKY88","SKY118","SKY128","SKY137"],
     "TOM HARDY": ["SKY26"],
     "BELİER": ["SKY45"],
     "FAST": ["SKY19","SKY123"],
@@ -50,7 +50,7 @@ GRUPLAR = {
     "METEHAN": ["SKY97"],
     "CİCİ": ["SKY38","SKY56","SKY92"],
     "FRED": ["SKY106","SKY107","SKY108","SKY109","SKY110","SKY111","SKY115","SKY116","SKY117","SKY135","SKY136"],
-    "BOŞ": ["SKY136"]
+    "BOŞ": ["SKY138","SKY139","SKY140"]
 }
 
 def normalize_command(name):
