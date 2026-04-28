@@ -48,9 +48,10 @@ GRUPLAR = {
     "WALTERWHİTE": ["SKY60"],
     "MEMATİ": ["SKY78","SKY90"],
     "METEHAN": ["SKY97"],
+    "GARGAMEL": ["SKY138"],
     "CİCİ": ["SKY38","SKY56","SKY92"],
     "FRED": ["SKY106","SKY107","SKY108","SKY109","SKY110","SKY111","SKY115","SKY116","SKY117","SKY135","SKY136"],
-    "BOŞ": ["SKY138","SKY139","SKY140"]
+    "BOŞ": ["SKY139","SKY140"]
 }
 
 def normalize_command(name):
