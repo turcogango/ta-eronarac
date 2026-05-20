@@ -21,7 +21,7 @@ PANEL = {
     "password": os.environ.get("PANEL2_PASS")
 }
 
-}
+
 
 GRUPLAR = {
     "MALEFİZ": ["SKY02","SKY03","SKY06","SKY07","SKY12","SKY13","SKY14","SKY16","SKY17",
