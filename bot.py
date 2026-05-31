@@ -51,11 +51,10 @@ GRUPLAR = {
         "SKY90","SKY92","SKY127","SKY114"],
 
     "FRED": [ "SKY57","SKY64","SKY106","SKY107","SKY108","SKY109",
-        "SKY110","SKY111","SKY115","SKY116","SKY117",
+        "SKY110","SKY111","SKY115","SKY116","SKY117","SKY124",
         "SKY135","SKY136","SKY60","SKY140","SKY91"]
-
-
 }
+
 def normalize_command(name):
     name = unicodedata.normalize("NFKD", name)
     name = name.encode("ascii", "ignore").decode("ascii")
