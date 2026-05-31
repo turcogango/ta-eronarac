@@ -41,7 +41,6 @@ GRUPLAR = {
 
     "KARTAL": ["SKY68"],
 
-    "XAR": ["SKY124"],
 
     "GECEBEY": ["SKY05"],
 
