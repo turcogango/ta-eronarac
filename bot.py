@@ -37,7 +37,7 @@ GRUPLAR = {
     "FREDD": [
         "SKY45","SKY44","SKY42","SKY40","SKY39","SKY37",
         "SKY30","SKY29","SKY28","SKY24","SKY12","SKY07",
-        "SKY02","SKY59","SKY57","SKY64","SKY60"
+        "SKY02","SKY59","SKY57","SKY64","SKY60","SKY72"
     ],
 
     "DAYI": ["SKY69","SKY67","SKY66"],
